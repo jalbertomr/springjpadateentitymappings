@@ -3,6 +3,12 @@ logging:
     org.springframework: INFO
 
 spring:
+  profiles:
+    #active: h2
+    active: postgresql
+---
+spring:
+  profiles: h2
   datasource:
     driver-class-name: org.h2.Driver
     url: jdbc:h2:mem:testdb
@@ -11,6 +17,27 @@ spring:
   h2.console.enabled: true
   jpa:
     database-platform: org.hibernate.dialect.H2Dialect
+    show-sql: true
+    properties:
+      hibernate:
+        show-sql: true
+        use_sql_comments: true
+        format_sql: true
+    generate-ddl: true
+    hibernate:
+      ddl-auto: create-drop
+  sql.init.mode: never
+---
+spring:
+  profiles: postgresql
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/personMS
+    username: postgres
+    password: password
+  h2.console.enabled: true
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQL92Dialect
     show-sql: true
     properties:
       hibernate:

@@ -29,6 +29,5 @@ public class SpringdatajpaentitymappingApplication implements CommandLineRunner 
         customer.setItem( item);
         Customer savedCustomer = customerRepository.save(customer);
         log.info("savedCustomer {}", savedCustomer);
-
     }
 }
