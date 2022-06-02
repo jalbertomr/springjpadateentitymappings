@@ -1,4 +1,4 @@
-package com.bext.entity;
+package com.bext.onetooneunidirection.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,11 +7,12 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 
 @Entity
-@Table
 @Data
+@NoArgsConstructor
+@Table( name = "item", schema = "dummy")
 public class Item {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "item_seq")
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "dummy.item_seq")
     private Long id;
     private String name;
 

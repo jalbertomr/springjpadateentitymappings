@@ -1,6 +1,6 @@
-package com.bext.repository;
+package com.bext.onetoonebidirectable.repository;
 
-import com.bext.entity.Item;
+import com.bext.onetoonebidirectable.entity.Item;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ItemRepository extends JpaRepository<Item, Long> {

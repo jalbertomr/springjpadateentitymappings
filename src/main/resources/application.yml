@@ -11,7 +11,7 @@ spring:
   profiles: h2
   datasource:
     driver-class-name: org.h2.Driver
-    url: jdbc:h2:mem:testdb
+    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;MODE=MYSQL;INIT=CREATE SCHEMA IF NOT EXISTS DUMMY;
     username: sa
     password:
   h2.console.enabled: true
@@ -32,7 +32,7 @@ spring:
   profiles: postgresql
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/personMS
+    url: jdbc:postgresql://localhost:5432/personMS?search_path=dummy
     username: postgres
     password: password
   h2.console.enabled: true
