@@ -15,7 +15,8 @@ public class Customer {
     private Long id;
     private String name;
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "item_id_fk")      // default "item_id", could by omitted
+    @JoinColumn(name = "item_id_fk",            // default "item_id", could by omitted
+                referencedColumnName = "id")    // default could be omitted
     private Item item;                    // in DB -> item_id_fk    bigint H2
 
     public Customer(String name) {

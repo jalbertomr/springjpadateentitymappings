@@ -1,5 +1,6 @@
 package com.bext.onetooneunidirection;
 
+import com.bext.onetooneunidirection.dto.CustomerItem;
 import com.bext.onetooneunidirection.entity.Customer;
 import com.bext.onetooneunidirection.entity.Item;
 import com.bext.onetooneunidirection.repository.ItemRepository;
@@ -10,6 +11,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -47,17 +49,19 @@ public class SpringdatajpaentitymappingApplication implements CommandLineRunner 
         Customer customer = new Customer("Jose Alberto");
         Item item = new Item("Item2");
         customer.setItem( item);
-        Customer savedCustomer = customerRepository.save(customer);
-        log.info("savedCustomer {}", savedCustomer);
+        Customer _customer = customerRepository.save(customer);
+        log.info("savedCustomer {}", _customer);
 
-        Customer recoveredCustomer = customerRepository.findById(customer.getId()).get();
-        log.info("recoveredCustomer: {}", recoveredCustomer);
+        Customer customerFinded = customerRepository.findById(_customer.getId()).get();
+        log.info("recoveredCustomer: {}", customerFinded);
 
-        Item recoveredItem = itemRepository.findById(customer.getItem().getId()).get();
+        Item recoveredItem = itemRepository.findById(_customer.getItem().getId()).get();
         log.info("recoveredItem: {}", recoveredItem);
 
         // given new Customer , new Item  -> item set customer IMPOSSIBLE -> save Item
         // never save customer
 
+        List<CustomerItem> customerItemList = customerRepository.getJoinCustomerItem();
+        customerItemList.forEach(e -> log.info("customerItem: {}", e));
     }
 }

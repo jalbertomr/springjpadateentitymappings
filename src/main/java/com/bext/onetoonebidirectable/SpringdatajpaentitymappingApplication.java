@@ -51,22 +51,22 @@ public class SpringdatajpaentitymappingApplication implements CommandLineRunner 
         Customer customer = new Customer("Jose Alberto");
         Item item = new Item("Item-A");
         customer.setItem( item);
-        Customer savedCustomer = customerRepository.save(customer);
+        Customer _customer = customerRepository.save(customer);
 
-        log.info("savedCustomer {}", savedCustomer);
-        Customer customerLoaded = customerRepository.findById(1L).get();
+        log.info("savedCustomer {}", _customer);
+        Customer customerFinded = customerRepository.findById(1L).get();
 
         // To Retrieve Customer-Item the Customer-Item must be fetch.EAGER (the default)
-        log.info("customerLoaded {}", customerLoaded.getItem().getName());
+        log.info("customerLoaded {}", customerFinded.getItem().getName());
 
         // Create new Customer - Item and save by Item Will NOT create Customer-Item relation in table
-        Customer customer2 = new Customer("Victoria");
+        Customer victoria = new Customer("Victoria");
         Item itemB = new Item("item-B");
 
-        //itemB.setCustomer(customer2);  // This Way will NOT create Custom-Item relation in table
+        itemB.setCustomer(victoria);  // This Way will NOT create Custom-Item relation in table
         //itemRepository.save(itemB);
 
-        customer2.setItem(itemB);
-        customerRepository.save(customer2);
+        victoria.setItem(itemB);
+        customerRepository.save(victoria);
     }
 }

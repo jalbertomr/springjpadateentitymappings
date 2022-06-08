@@ -1,22 +1,22 @@
-package com.bext.onetooneunidirectionInverse.entity;
-
-import lombok.Data;
-import lombok.NoArgsConstructor;
+package com.bext.onetooneunidirsharedkey.entity;
 
 import javax.persistence.*;
 
 @Entity
-@NoArgsConstructor
-@Table(name = "item", schema = "dummy")
+@Table(name="item", schema="dummy")
 public class Item {
+
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "dummy.item_seq")
+    @Column(name="customer_id")
     private Long id;
     private String name;
-
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinColumn(name="customer_id_fk", referencedColumnName = "id")  // this could be omitted
+    @OneToOne(fetch = FetchType.EAGER)   // To Try to update item id but dont work, done manually
+    @MapsId            // add contraint foreign key (customer_id) references dummy.customer
+    @JoinColumn(name ="customer_id")
     private Customer customer;
+
+    public Item() {
+    }
 
     public Item(String name) {
         this.name = name;
@@ -51,7 +51,7 @@ public class Item {
         return "Item{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
-                ", customer.name=" + customer.getName() +
+                //(customer != null ? ", customer=" + customer : ",customer=null") +
                 '}';
     }
 }

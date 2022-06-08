@@ -35,7 +35,6 @@ spring:
     url: jdbc:postgresql://localhost:5432/personMS?search_path=dummy
     username: postgres
     password: password
-  h2.console.enabled: true
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQL92Dialect
     show-sql: true

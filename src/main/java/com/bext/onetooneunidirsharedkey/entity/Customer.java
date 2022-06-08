@@ -1,20 +1,21 @@
-package com.bext.onetooneunidirectionInverse.entity;
-
-import lombok.Data;
-import lombok.NoArgsConstructor;
+package com.bext.onetooneunidirsharedkey.entity;
 
 import javax.persistence.*;
 
 @Entity
-@NoArgsConstructor
-@Table(name = "customer", schema = "dummy")
+@Table(name="customer", schema="dummy")
 public class Customer {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "dummy.customer_seq")
+    @Column(name="customer_id")
     private Long id;
     private String name;
-    @OneToOne(mappedBy = "customer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "customer",
+            cascade = CascadeType.ALL, fetch = FetchType.EAGER)  // To Try to update item id but dont work, done manually
     private Item item;
+
+    public Customer() {
+    }
 
     public Customer(String name) {
         this.name = name;
@@ -49,8 +50,7 @@ public class Customer {
         return "Customer{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
-                ", item=" + item +
+                //(item != null ? ",item=" + item : ",item=null") +
                 '}';
     }
 }
-
