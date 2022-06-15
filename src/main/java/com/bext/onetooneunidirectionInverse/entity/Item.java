@@ -14,7 +14,7 @@ public class Item {
     private Long id;
     private String name;
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name="customer_id_fk", referencedColumnName = "id")  // this could be omitted
     private Customer customer;
 

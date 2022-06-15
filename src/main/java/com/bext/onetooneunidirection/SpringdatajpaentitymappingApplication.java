@@ -1,10 +1,10 @@
 package com.bext.onetooneunidirection;
 
-import com.bext.onetooneunidirection.dto.CustomerItem;
-import com.bext.onetooneunidirection.entity.Customer;
-import com.bext.onetooneunidirection.entity.Item;
-import com.bext.onetooneunidirection.repository.ItemRepository;
-import com.bext.onetooneunidirection.repository.CustomerRepository;
+import com.bext.onetooneunidirection.dto.CountryCapital;
+import com.bext.onetooneunidirection.entity.Country;
+import com.bext.onetooneunidirection.entity.Capital;
+import com.bext.onetooneunidirection.repository.CapitalRepository;
+import com.bext.onetooneunidirection.repository.CountryRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -12,15 +12,14 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import java.util.List;
-import java.util.Optional;
 
 @Slf4j
 @SpringBootApplication
 public class SpringdatajpaentitymappingApplication implements CommandLineRunner {
     @Autowired
-    private CustomerRepository customerRepository;
+    private CountryRepository countryRepository;
     @Autowired
-    private ItemRepository itemRepository;
+    private CapitalRepository capitalRepository;
 
     public static void main(String[] args) {
         SpringApplication.run(SpringdatajpaentitymappingApplication.class, args);
@@ -29,39 +28,39 @@ public class SpringdatajpaentitymappingApplication implements CommandLineRunner 
     @Override
     public void run(String... args) throws Exception {
         /* @OneToOne Unidirection
-        class Customer {                                      create table dummy.customer (
+        class Country {                                      create table dummy.country (
             long   id;                                         id         bigint not null,
             String name;                                       name       varchar(255),
             @OneToOne
-            Item   item;                                       item_id_fk bigint,
+            Capital   capital;                                       capital_id_fk bigint,
                                                                           primary key (id)
          )
-         class Item {                                          create table dummy.item (
+         class Capital {                                          create table dummy.capital (
             long id;                                            id         bigint not null,
             String name;                                        name       varchar(255),
          }                                                      primary key (id)
                                                                 )
-         given  new Customer , new Item ->  customer set [Item] -> save Customer
-         then   item saved
-         test   recoverItem = item not directlu saved
+         given  new Country , new Capital ->  country set [capital] -> save Country
+         then   capital saved
+         test   recoverCapital = capital not directly saved
 
         */
-        Customer customer = new Customer("Jose Alberto");
-        Item item = new Item("Item2");
-        customer.setItem( item);
-        Customer _customer = customerRepository.save(customer);
-        log.info("savedCustomer {}", _customer);
+        Country country = new Country("Mexico");
+        Capital capital = new Capital("CDMX");
+        country.setCapital(capital);
+        Country _country = countryRepository.save(country);
+        log.info("savedCountry {}", _country);
 
-        Customer customerFinded = customerRepository.findById(_customer.getId()).get();
-        log.info("recoveredCustomer: {}", customerFinded);
+        Country countryFinded = countryRepository.findById(_country.getId()).get();
+        log.info("recoveredCountry: {}", countryFinded);
 
-        Item recoveredItem = itemRepository.findById(_customer.getItem().getId()).get();
-        log.info("recoveredItem: {}", recoveredItem);
+        Capital recoveredCapital = capitalRepository.findById(_country.getCapital().getId()).get();
+        log.info("recoveredCapital: {}", recoveredCapital);
 
-        // given new Customer , new Item  -> item set customer IMPOSSIBLE -> save Item
-        // never save customer
+        // given new Country , new Capital  -> capital set country IMPOSSIBLE -> save capital
+        // never save Country
 
-        List<CustomerItem> customerItemList = customerRepository.getJoinCustomerItem();
-        customerItemList.forEach(e -> log.info("customerItem: {}", e));
+        List<CountryCapital> countryCapitalList = countryRepository.getJoinCountryCapital();
+        countryCapitalList.forEach(e -> log.info("countryCapital: {}", e));
     }
 }

@@ -10,7 +10,7 @@ public class Author {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "dummy.author_seq")
     private Long id;
-    private int version = 0;
+    private int version;
     @Column( nullable = false)
     private String firstName;
     private String lastName;

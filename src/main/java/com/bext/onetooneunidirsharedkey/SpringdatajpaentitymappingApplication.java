@@ -36,7 +36,7 @@ public class SpringdatajpaentitymappingApplication implements CommandLineRunner 
 
     @Transactional
     public void oneToOneSharedKeyIsNotAutomatically(){
-        //Has to be dome manually
+        //Has to be done manually
         Customer customer = new Customer("Jose Alberto");
         log.info("customer: {}", customer);
         Customer _customer = customerRepository.save(customer);

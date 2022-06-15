@@ -9,6 +9,8 @@ import com.bext.manytomanybidirtable.entity.Item;
 import com.bext.manytomanybidirtable.repository.CustomerRepository;
 import com.bext.manytomanybidirtable.repository.ItemRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.Hibernate;
+import org.hibernate.proxy.HibernateProxy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -69,9 +71,24 @@ public class SpringdatajpaentitymappingApplication implements CommandLineRunner 
         //itemRepository.deleteAll();
         //test1();
         //insertCustomerItemsManyTimes();
-        //insertCustomerItemsthenFindItem();
+        insertCustomerItemsthenFindItem();
         //setCustomerRepository_findCustomersByItemSetId();
-        customerDaoTest();
+        //customerDaoTest();
+        //namedQuery();
+    }
+
+    @Transactional
+    public void loadData(){
+        Customer customer1 = new Customer("Jose Alberto");
+        Item itemA = new Item("Item-A");
+        customer1.addItem(itemA);
+        Item itemB = new Item("Item-B");
+        customer1.addItem(itemB);
+        Item itemC = new Item("Item-C");
+        customer1.addItem(itemC);
+        Item itemD = new Item("Item-D");
+        customer1.addItem(itemD);
+        Customer _customer1 = customerRepository.save(customer1);
     }
 
      @Transactional
@@ -142,10 +159,20 @@ public class SpringdatajpaentitymappingApplication implements CommandLineRunner 
         Customer _customer1 = customerRepository.save(customer1);
         log.info("_customer1 {}", _customer1.toString());
 
-        Item _item = itemRepository.findById(itemD.getId()).get();
+        //Item _item = itemRepository.findById(itemD.getId()).get();
+        Item _item = itemRepository.findItemsById_named(itemD.getId());      //USES QUERY JOIN FETCH to load customerSet (EAGER)
+        //Hibernate.initialize(_item.getCustomerSet());
         log.info("_item:{}", _item);
+        log.info("----{}",_item.getCustomerSet().getClass().getName());
         Set<Customer> customerSet = _item.getCustomerSet();
-        customerSet.forEach(e -> log.info("customer {}", e.toString()));
+
+        if ( customerSet instanceof HibernateProxy) {
+            log.info("YES instance of HibernateProxy.class");
+        } else {
+            log.info("NO instance of HibernateProxy.class");
+        };
+
+        customerSet.forEach(c -> log.info("customer {}", c.getName()));
     }
 
     @Transactional
@@ -233,5 +260,13 @@ public class SpringdatajpaentitymappingApplication implements CommandLineRunner 
 
         List<CustomerItem> joinInformation = customerRepository.getJoinInformation();
         joinInformation.forEach(e -> log.info("joinInformation: {}", e.toString()));
+    }
+
+    @Transactional
+    public void namedQuery(){
+        loadData();
+
+        Customer customer1 = customerRepository.myFindByName("Jose Alberto");
+        log.info("myFindByNameed: {}", customer1);
     }
 }

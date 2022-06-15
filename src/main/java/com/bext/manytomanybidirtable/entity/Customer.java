@@ -6,20 +6,15 @@ import java.util.Set;
 
 @Entity
 @Table(name = "customer", schema = "dummy")
-/*
-@NamedNativeQueries({
-        @NamedNativeQuery(name="getAllCustomersItems",
-                query = "select c.id as C_ID, c.name as C_NAME, i.id as I_ID, i.name as I_NAME from dummy.customer c, dummy.item i, dummy.customer_item_set ci " +
-                        " where ci.customer_set_id == c.id and ci.item_set_id = i.id"
-        )
-})*/
-//@NamedNativeQuery(name="myfindByName", query = "select * from dummy.customer c where c.name = :qname", resultClass = Customer.class)
+
+@NamedNativeQuery(name = "Customer.myFindByName",
+                  query = "select * from dummy.customer where name = :name", resultClass = Customer.class)
 public class Customer {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "dummy.customer_seq")
     private Long id;
     private String name;
-    @ManyToMany(fetch = FetchType.EAGER,
+    @ManyToMany(//fetch = FetchType.LAZY,  //default LAZY
             cascade = { CascadeType.PERSIST, CascadeType.ALL})
     @JoinTable(name = "customer_item_set",schema = "dummy",            // can be omitted default values
             joinColumns = {@JoinColumn(name = "customer_set_id")},     // can be omitted default values

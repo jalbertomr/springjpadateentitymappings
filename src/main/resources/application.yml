@@ -1,11 +1,16 @@
 logging:
   level:
     org.springframework: INFO
+    #org.hibernate.stat: DEBUG     #just for statistics, avoid on production
 
 spring:
   profiles:
     #active: h2
     active: postgresql
+  jpa.properties.hibernate:
+    #generate_statistics: true #just for statistics, avoid on production
+    session.events.log.events.log.LOG_QUERIES_SLOWER_THAN_MS: 3
+
 ---
 spring:
   profiles: h2
@@ -45,5 +50,5 @@ spring:
         format_sql: true
     generate-ddl: true
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: create #update #create-drop
   sql.init.mode: never

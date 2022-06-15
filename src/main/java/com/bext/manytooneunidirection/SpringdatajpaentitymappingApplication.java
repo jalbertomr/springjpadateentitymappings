@@ -5,10 +5,16 @@ import com.bext.manytooneunidirection.entity.Item;
 import com.bext.manytooneunidirection.repository.CustomerRepository;
 import com.bext.manytooneunidirection.repository.ItemRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.Hibernate;
+import org.hibernate.proxy.HibernateProxy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+import javax.transaction.Transactional;
+import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @SpringBootApplication
@@ -41,25 +47,6 @@ public class SpringdatajpaentitymappingApplication implements CommandLineRunner 
            Customer customer;                                  primary key (id)
         }                                                      )
 
-         given  new Customer , new Item ->  customer set [Item] -> save Customer
-         then   item saved
-
-        Item can set and get Customer.
-        */
-        // Create customer - item relation and save by customer
-        Customer customer = new Customer();
-        customer.setName("Jose Alberto");
-        Item item = new Item();
-        item.setName("Item-A");
-        Item itemB = new Item("Item-B");
-
-        item.setCustomer(customer);
-        Customer customerSaved = customerRepository.save(customer);
-        //Item savedItem = itemRepository.save(item);
-/*
-        itemB.setCustomer(customer);
-        Item saveItemB = itemRepository.save(itemB);
-*/
 
         //log.info("savedItem: {}", savedItem.getCustomer().getName());
 /*
@@ -87,7 +74,88 @@ public class SpringdatajpaentitymappingApplication implements CommandLineRunner 
         //itemB.setCustomer(customer);   // This will generate error: detached entity passed to persist because OneToOne violated
         itemRepository.save(itemB);
 */
+        //customerItemRelationSaveCustomer();
+        customerItemRelationSaveItem();
+        //loadData();
+        //itemFindById_checkCustomer();
+        //itemFindById_named_checkCustomer();
+    }
 
+    @Transactional
+    public void loadData(){
+        itemRepository.deleteAll();
 
+        Customer customer1 = new Customer("Jose Alberto");
+        Item itemA = new Item("Item-A");
+        itemA.setCustomer(customer1);
+        itemRepository.save(itemA);
+    }
+
+    @Transactional
+    public void customerItemRelationSaveCustomer(){
+        customerRepository.deleteAll();
+
+        Customer customer1 = new Customer("Jose Alberto");
+        Item itemA = new Item("Item-A");
+        itemA.setCustomer(customer1);
+        customerRepository.save(customer1);
+        List<Item> all = itemRepository.findAll();
+        log.info("items: {}", all);          // No item saved
+    }
+
+    @Transactional
+    public void customerItemRelationSaveItem(){
+        customerRepository.deleteAll();
+
+        Customer customer1 = new Customer("Jose Alberto");
+        Item itemA = new Item("Item-A");
+        itemA.setCustomer(customer1);
+        Item _item = itemRepository.save(itemA);
+
+        Item itemfinded = itemRepository.findById( _item.getId()).get();
+        Customer customer = itemfinded.getCustomer();
+        log.info("itemfinded.getCustomer() is HibernateProxy: {}", (customer instanceof HibernateProxy) ? "YES" : "NO");
+        log.info("itemfinded.getCustomer() is initialized: {}", Hibernate.isInitialized( customer));
+
+        customer = customerRepository.findById(customer.getId()).get();
+
+        log.info("itemfinded.getCustomer() is HibernateProxy: {}", (customer instanceof HibernateProxy) ? "YES" : "NO");
+        log.info("itemfinded.getCustomer() is initialized: {}", Hibernate.isInitialized( customer));
+
+        log.info("itemfinded _customer: {}", customer);
+        log.info("itemfinded: {}", itemfinded);          // No item saved
+    }
+
+    @Transactional
+    public void itemFindById_checkCustomer(){
+        log.info("itemFindBycheckcustomer");
+        Item itemfinded = itemRepository.findById( 1L).get();
+        Customer customer = itemfinded.getCustomer();      // gets customer proxy
+
+        log.info("itemfinded.getCustomer() is HibernateProxy: {}", (customer instanceof HibernateProxy) ? "YES" : "NO");
+        log.info("itemfinded.getCustomer() is initialized: {}", Hibernate.isInitialized( customer));
+        //String name = _itemCustomer.getName(); //LazyInitializationException: could not initialize proxy [com.bext.manytooneunidirection.entity.Customer#1] - no Sessio
+
+        //customer = customerRepository.findById(customer.getId()).get(); // initialize customer, proxy -> entity
+        Hibernate.initialize(itemfinded.getCustomer());                   // initialize customer, proxy -> entity
+
+        log.info("itemfinded.getCustomer() is HibernateProxy: {}", (customer instanceof HibernateProxy) ? "YES" : "NO");
+        log.info("itemfinded.getCustomer() is initialized: {}", Hibernate.isInitialized( customer));
+
+        log.info("itemfinded.getCustomer: {}", customer);
+        log.info("itemfinded.getName(): {}", itemfinded);
+    }
+
+    @Transactional
+    public void itemFindById_named_checkCustomer(){  //named query with JOIN FETCH
+        log.info("itemFindBycheck_named_checkCustomer");
+        Item itemfinded = itemRepository.findById_named( 1L);
+        Customer customer = itemfinded.getCustomer();      // gets customer
+
+        log.info("itemfinded.getCustomer() is HibernateProxy: {}", (customer instanceof HibernateProxy) ? "YES" : "NO");
+        log.info("itemfinded.getCustomer() is initialized: {}", Hibernate.isInitialized( customer));
+
+        log.info("itemfinded.getCustomer: {}", customer);
+        log.info("itemfinded.getName(): {}", itemfinded);
     }
 }

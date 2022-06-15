@@ -9,14 +9,14 @@ import javax.persistence.*;
 @Entity
 @Data
 @NoArgsConstructor
-@Table( name = "item", schema = "dummy")
-public class Item {
+@Table( name = "capital", schema = "dummy")
+public class Capital {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "dummy.item_seq")
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "dummy.capital_seq")
     private Long id;
     private String name;
 
-    public Item(String name) {
+    public Capital(String name) {
         this.name = name;
     }
 }

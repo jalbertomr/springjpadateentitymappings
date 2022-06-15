@@ -17,7 +17,7 @@ public class Item {
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "dummy.item_seq")
     private Long id;
     private String name;
-    @ManyToMany(mappedBy = "itemSet", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER)
+    @ManyToMany(mappedBy = "itemSet", cascade = {CascadeType.PERSIST, CascadeType.MERGE})  //Default LAZY
     private Set<Customer> customerSet= new HashSet<>();
 
     public Item() {

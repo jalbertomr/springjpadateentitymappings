@@ -9,7 +9,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class CustomerItem {
-    private String customerName;
-    private String itemName;
+public class CountryCapital {
+    private String countryName;
+    private String capitalName;
 }

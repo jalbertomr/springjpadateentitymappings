@@ -10,7 +10,7 @@ public class Book {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO,generator = "dummy.book_seq")
     private Long id;
-    private int version = 0;
+    private int version;
     private String title;
     @ManyToMany(mappedBy = "books", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER)
     private List<Author> authors = new ArrayList<>();

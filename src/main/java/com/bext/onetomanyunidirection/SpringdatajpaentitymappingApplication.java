@@ -11,7 +11,11 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @SpringBootApplication
@@ -20,6 +24,8 @@ public class SpringdatajpaentitymappingApplication implements CommandLineRunner 
     CustomerRepository customerRepository;
     @Autowired
     ItemRepository itemRepository;
+    @PersistenceContext
+    EntityManager entityManager;
 
     public static void main(String[] args) {
         SpringApplication.run( SpringdatajpaentitymappingApplication.class, args );
@@ -44,7 +50,12 @@ public class SpringdatajpaentitymappingApplication implements CommandLineRunner 
                                                               )
 
         */
-        // Create customer - item relation and save by customer also saves the items.
+        createCustomerItems();
+        findCustomerAddItem();
+    }
+
+    @Transactional
+    public void createCustomerItems(){
         Customer customer = new Customer();
         customer.setName("Jose Alberto");
         Item item = new Item();
@@ -55,6 +66,21 @@ public class SpringdatajpaentitymappingApplication implements CommandLineRunner 
 
         Customer customerSaved = customerRepository.save(customer);
         log.info("customerSaved {}",customerSaved);
+
+        List<CustomerItem> customerItemList = customerRepository.getJoinCustomerItem();
+        customerItemList.forEach(e -> log.info("customerItem: {}", e.toString()));
+    }
+
+    @Transactional
+    public void findCustomerAddItem(){
+        log.info("findCustomerAddItem");
+
+        Customer _customer = customerRepository.findById_named(1L);
+        Item itemX = new Item("Item-X");
+        //itemRepository.save(itemX);
+
+        _customer.getItems().add(itemX);
+        customerRepository.save(_customer);
 
         List<CustomerItem> customerItemList = customerRepository.getJoinCustomerItem();
         customerItemList.forEach(e -> log.info("customerItem: {}", e.toString()));

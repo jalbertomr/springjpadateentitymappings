@@ -14,9 +14,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.transaction.annotation.Transactional;
 
 
-import javax.transaction.Transactional;
 import java.util.List;
 
 @Slf4j
@@ -33,8 +33,14 @@ public class SpringjpaderivedqueriesApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        findByXXX();
-        //test1();
+        test1();
+        //findBy__();
+        //TraveseAssociations();
+        //sorting();
+        //paging();
+        //spel();
+        //nativeQuery();
+        //modifiable();
     }
 
     @Transactional
@@ -78,7 +84,7 @@ public class SpringjpaderivedqueriesApplication implements CommandLineRunner {
     }
 
     @Transactional
-    public void findByXXX(){
+    public void findBy__() {
         this.loadData();
 
         List<Author> byFirstName = authorRepository.findByFirstName("Jose Alberto");
@@ -90,7 +96,7 @@ public class SpringjpaderivedqueriesApplication implements CommandLineRunner {
         List<Author> byFirstNameContainingIgnoreCase = authorRepository.findByFirstNameContainingIgnoreCase("Albe");
         log.info("byFirstNameContainingIgnoreCase: {}", byFirstNameContainingIgnoreCase);
 
-        List<Author> byFirstNameLike = authorRepository.findByFirstNameLike("%ose%");
+        List<Author> byFirstNameLike = authorRepository.findByFirstNameLike("%Al%");
         log.info("byFirstNameLike: {}", byFirstNameLike);
 
         List<Author> byYearBefore = authorRepository.findByYearBefore(2001);
@@ -99,10 +105,14 @@ public class SpringjpaderivedqueriesApplication implements CommandLineRunner {
         List<Author> byYearBetween = authorRepository.findByYearBetween(2015, 2030);
         byYearBetween.forEach(e -> log.info("byYearBetween: {}", e.getFirstName() + " " + e.getLastName() + " " + e.getYear()));
 
-        List<Author> byYearLessThanEqualOrBooksGreaterThanEqual = authorRepository.findByYearLessThanOrYearGreaterThan(2000,2000);
+        List<Author> byYearLessThanEqualOrBooksGreaterThanEqual = authorRepository.findByYearLessThanOrYearGreaterThan(2000, 2000);
         byYearLessThanEqualOrBooksGreaterThanEqual
                 .forEach(e -> log.info("byYearLessThanEqualOrBooksGreaterThanEqual: {}", e.getFirstName() + " " + e.getLastName() + " " + e.getYear()));
 
+    }
+
+    @Transactional
+    public void TraveseAssociations() {
         // Travese associations
         List<Author> byBooksTitle = authorRepository.findByBooksTitle("Soberania");
         byBooksTitle.forEach(e -> log.info("byBooksTitle: {}", e.getFirstName() + " " + e.getLastName()));
@@ -112,25 +122,34 @@ public class SpringjpaderivedqueriesApplication implements CommandLineRunner {
                 .forEach(e -> log.info("byYearLessThanEqualAndBooksTitleContainsIgnoreCase: {}", e.getFirstName() + " " + e.getLastName() + " " + e.getYear() +
                         " " + e.getBooks().stream().filter(book -> book.getTitle().contains("ia")).findFirst().orElse(null)));
 
-        // Order
-        List<Author> byFirstNameContainingIgnoreCaseOrderByYearAsc = authorRepository.findByFirstNameContainingIgnoreCaseOrderByYearAsc("a");
-        byFirstNameContainingIgnoreCaseOrderByYearAsc.forEach( a -> log.info("autor year ascendent: {}", a.getFirstName() + " " + a.getYear() ));
-
-        List<Author> byFirstNameContainingIgnoreCaseOrderByYearDesc = authorRepository.findByFirstNameContainingIgnoreCaseOrderByYearDesc("a");
-        byFirstNameContainingIgnoreCaseOrderByYearDesc.forEach( a -> log.info("autor year descendent: {}", a.getFirstName() + " " + a.getYear() ));
-
         List<Author> findByFirstNameContainingIgnoreCaseOrderByBooksTitle = authorRepository.findByFirstNameContainingIgnoreCaseOrderByBooksTitle("a");
-        findByFirstNameContainingIgnoreCaseOrderByBooksTitle.forEach( a -> log.info("autor order booksTitle: {}", a.getFirstName() + " " + a.getYear() +
+        findByFirstNameContainingIgnoreCaseOrderByBooksTitle.forEach(a -> log.info("autor order booksTitle: {}", a.getFirstName() + " " + a.getYear() +
                 " " + a.getBooks().toString()
         ));
+    }
+
+    @Transactional
+    public void sorting(){
+        loadData();
+        // Sorting
+        List<Author> byFirstNameContainingIgnoreCaseOrderByYearAsc = authorRepository.findByFirstNameContainingIgnoreCaseOrderByYearAsc("a");
+        byFirstNameContainingIgnoreCaseOrderByYearAsc.forEach(a -> log.info("autor year ascendent: {}", a.getFirstName() + " " + a.getYear()));
+
+        List<Author> byFirstNameContainingIgnoreCaseOrderByYearDesc = authorRepository.findByFirstNameContainingIgnoreCaseOrderByYearDesc("a");
+        byFirstNameContainingIgnoreCaseOrderByYearDesc.forEach(a -> log.info("autor year descendent: {}", a.getFirstName() + " " + a.getYear()));
 
         Sort sortYearAsc = Sort.by("year").ascending().and(Sort.by("firstName").descending());
         List<Author> findByFirstNameContainingIgnoreCaseSortParameter = authorRepository.findByFirstNameContainingIgnoreCase("", sortYearAsc);
-        findByFirstNameContainingIgnoreCaseSortParameter.forEach( a -> log.info("findByFirstNameContainingIgnoreCaseSortParameter: {}", a.getFirstName() + " " + a.getYear()));
+        findByFirstNameContainingIgnoreCaseSortParameter.forEach(a -> log.info("findByFirstNameContainingIgnoreCaseSortParameter: {}", a.getFirstName() + " " + a.getYear()));
 
         List<Author> findFirst2ByFirstNameContainingIgnoreCaseOrderByYear = authorRepository.findFirst2ByFirstNameContainingIgnoreCaseOrderByYear("a");
-        findFirst2ByFirstNameContainingIgnoreCaseOrderByYear.forEach( a -> log.info("findFirst2ByFirstNameContainingIgnoreCaseOrderByYear: {}", a.getFirstName() + " " + a.getYear()));
+        findFirst2ByFirstNameContainingIgnoreCaseOrderByYear.forEach(a -> log.info("findFirst2ByFirstNameContainingIgnoreCaseOrderByYear: {}", a.getFirstName() + " " + a.getYear()));
+    }
 
+    @Transactional
+    public void paging(){
+        loadData();
+        // Paging
         Pageable pageable = PageRequest.of(0 ,2);
         Page<Author> findAllPageable = authorRepository.findAll(pageable);
         log.info("findAllPageable.getTotalElements(): {}",findAllPageable.getTotalElements());
@@ -140,6 +159,45 @@ public class SpringjpaderivedqueriesApplication implements CommandLineRunner {
         Pageable pageable1 = PageRequest.of(1, 2);
         Page<Author> findAllPageable1 = authorRepository.findAll(pageable1);
         findAllPageable1.getContent().forEach(author -> log.info("author: {}", author.getFirstName()));
+    }
 
+    @Transactional
+    public void spel(){
+        loadData();
+        List<Author> findSpel = authorRepository.findByFirstNameSpEL_param("Jose Alberto");
+        findSpel.forEach(a -> log.info("findSpel_param: {}", a));
+
+        List<Author> findSpel_name = authorRepository.findByFirstNameSpEL_paramname("Jose Alberto");
+        findSpel_name.forEach(a -> log.info("findSpel_paramname: {}", a));
+
+        List<Author> findAuthorByfirstNameLikeSpel = authorRepository.findAuthorByfirstNameLikeSpel("Al");
+        findAuthorByfirstNameLikeSpel.forEach(a -> log.info("findAuthorByfirstNameLikeSpel: {}", a));
+
+        List<Author> authorByYearSpEL = authorRepository.findAuthorByYearSpEL(2000);
+        authorByYearSpEL.forEach(a -> log.info("authorByYearSpEL: {}", a));
+
+        List<Author> by_entityName = authorRepository.findByYear_entityName();
+        by_entityName.forEach(a -> log.info("by_entityName: {}", a.getFirstName()+ " " + a.getYear()));
+    }
+
+    @Transactional
+    public void nativeQuery(){
+        loadData();
+
+        List<Author> nativequery = authorRepository.findAuthorByFirstName_Native("Victoria");
+        log.info("nativeQuery: {}", nativequery);
+    }
+
+    @Transactional
+    public void modifiable(){
+        loadData();
+
+        authorRepository.deleteByfirstName("Jose Alberto");
+        List<Author> all = authorRepository.findAll();
+        all.forEach(a -> log.info("all prefixed: {}", a.getFirstName()));
+
+        authorRepository.addPrefixTofirstName("aqui_");
+        List<Author> all2 = authorRepository.findAll();
+        all2.forEach(a -> log.info("all prefixed: {}", a.getFirstName()));
     }
 }

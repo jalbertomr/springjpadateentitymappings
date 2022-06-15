@@ -11,7 +11,7 @@ import java.util.List;
 @Repository
 public interface CustomerRepository extends JpaRepository<Customer, Long> {
     List<Customer> findCustomersByItemSetId(Long ItemId);
-    //Customer myFindByName(String name);
+    Customer myFindByName(String name);
     @Query("SELECT new com.bext.manytomanybidirtable.dto.CustomerItem(c.name, i.name) FROM Customer c JOIN c.itemSet i")
     public List<CustomerItem> getJoinInformation();
 }
